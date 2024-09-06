@@ -1,11 +1,11 @@
-<h1 align="center">markshust/docker-magento</h1>
+<h1 align="center">Demystify-Digital-Limited/docker-magento</h1>
 
 <div align="center">
-  <p>Mark Shust's Docker Configuration for Magento</p>
+  <p>DemystifyDigital's Docker Configuration for Magento</p>
   <img src="https://img.shields.io/badge/magento-2.X-brightgreen.svg?logo=magento&longCache=true" alt="Supported Magento Versions" />
   <a href="https://hub.docker.com/r/markoshust/magento-php/" target="_blank"><img src="https://img.shields.io/docker/pulls/markoshust/magento-php.svg?label=php%20docker%20pulls" alt="Docker Hub Pulls - PHP" /></a>
-  <a href="https://hub.docker.com/r/markoshust/magento-nginx/" target="_blank"><img src="https://img.shields.io/docker/pulls/markoshust/magento-nginx.svg?label=nginx%20docker%20pulls" alt="Docker Hub Pulls - Nginx" /></a>
-  <a href="https://github.com/markshust/docker-magento/graphs/commit-activity" target="_blank"><img src="https://img.shields.io/badge/maintained%3F-yes-brightgreen.svg" alt="Maintained - Yes" /></a>
+  <a href="https://hub.docker.com/r/tygrdev/magento-nginx/" target="_blank"><img src="https://img.shields.io/docker/pulls/tygrdev/magento-nginx.svg?label=nginx%20docker%20pulls" alt="Docker Hub Pulls - Nginx" /></a>
+  <a href="https://github.com/tygrdev/docker-magento/graphs/commit-activity" target="_blank"><img src="https://img.shields.io/badge/maintained%3F-yes-brightgreen.svg" alt="Maintained - Yes" /></a>
   <img src="https://img.shields.io/badge/apple%20silicon%20support-yes-brightgreen" alt="Apple Silicon Support" />
   <a href="https://opensource.org/licenses/MIT" target="_blank"><img src="https://img.shields.io/badge/license-MIT-blue.svg" /></a>
 </div>
@@ -24,7 +24,7 @@
 
 View Dockerfiles for the latest tags:
 
-- [markoshust/magento-nginx (Docker Hub)](https://hub.docker.com/r/markoshust/magento-nginx/)
+- [tygrdev/magento-nginx (Docker Hub)](https://hub.docker.com/r/tygrdev/magento-nginx/)
   - [`1.18`, `1.18-8`](images/nginx/1.18)
   - [`1.22`, `1.22-0`](images/nginx/1.22)
   - [`1.24`, `1.24-0`](images/nginx/1.24)
@@ -52,19 +52,13 @@ View Dockerfiles for the latest tags:
 - [markoshust/ssh (Docker Hub)](https://hub.docker.com/r/markoshust/magento-ssh/)
   - [`latest`](images/ssh)
 
-## Prerequisites
-
-This setup assumes you are running Docker on a computer with at least 6GB of RAM allocated to Docker, a dual-core, and an SSD hard drive. [Download & Install Docker Desktop](https://www.docker.com/products/docker-desktop).
-
-This configuration has been tested on Mac & Linux. Windows is supported through the use of Docker on WSL.
-
 ## Setup
 
 ### Automated Setup (New Project)
 
 ```bash
 # Create your project directory then go into it:
-mkdir -p ~/Sites/magento
+mkdir -p ~/sites/magento
 cd $_
 
 # Run this automated one-liner from the directory you want to install your project.
@@ -96,7 +90,7 @@ mkdir -p ~/Sites/magento
 cd $_
 
 # Download the Docker Compose template:
-curl -s https://raw.githubusercontent.com/markshust/docker-magento/master/lib/template | bash
+curl -s https://raw.githubusercontent.com/Demystify-Digital-Limited/docker-magento/master/lib/template | bash
 
 # Download the version of Magento you want to use with:
 bin/download 2.4.7 community
@@ -136,7 +130,7 @@ mkdir -p ~/Sites/magento
 cd $_
 
 # Download the Docker Compose template:
-curl -s https://raw.githubusercontent.com/markshust/docker-magento/master/lib/template | bash
+curl -s https://raw.githubusercontent.com/Demystify-Digital-Limited/docker-magento/master/lib/template | bash
 
 # Take a backup of your existing database:
 bin/mysqldump > ~/Sites/existing/magento.sql

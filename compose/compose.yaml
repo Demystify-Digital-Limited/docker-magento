@@ -1,21 +1,24 @@
-## Mark Shust's Docker Configuration for Magento
-## (https://github.com/markshust/docker-magento)
-##
-## Version 47.0.1
-
-## To use SSH, see https://github.com/markshust/docker-magento#ssh
-## Linux users, see https://github.com/markshust/docker-magento#linux
-
-## If you changed the default Docker network, you may need to replace
-## 172.17.0.1 in this file with the result of:
-## docker network inspect bridge --format='{{(index .IPAM.Config 0).Gateway}}'
+## The base containers that always run, either in production or in development.
+## Containers that are only required or desired during development are located in the "compose.dev.yaml" file
 
 services:
-  app:
-    image: markoshust/magento-nginx:1.24-0
+  proxy:
+    container_name: proxy
+    image: traefik:v3.1
     ports:
-      - "80:8000"
-      - "443:8443"
+      - "80:80"
+      - "443:443"
+      - "8888:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik/traefik.yaml:/etc/traefik/traefik.yaml:ro
+      - ./traefik/acme.json/:/etc/traefik/acme
+    depends_on:
+      - app
+
+  app:
+    container_name: app
+    image: tygrdev/magento-nginx:1.24-0
     volumes: &appvolumes
       - ~/.composer:/var/www/.composer:cached
       - ~/.ssh/id_rsa:/var/www/.ssh/id_rsa:cached
@@ -23,19 +26,21 @@ services:
       - appdata:/var/www/html
       - sockdata:/sock
       - ssldata:/etc/nginx/certs
-    #extra_hosts: &appextrahosts
-      ## Selenium support, replace "magento.test" with URL of your site
-      #- "magento.test:172.17.0.1"
-      ## Linux, uncomment for Xdebug capabilities:
-      #- "host.docker.internal:host-gateway"
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.app.entrypoints=web,websecure
+      - traefik.http.routers.app.rule=Host(`ecommerce.demystifydigital.co.uk`)
+      - traefik.http.services.app.loadbalancer.server.port=8000
+      - traefik.http.routers.app.tls.certResolver=letsencrypt
 
   phpfpm:
-    image: markoshust/magento-php:8.3-fpm-2
+    container_name: phpfpm
+    image: markoshust/magento-php:8.1-fpm-5
     volumes: *appvolumes
     env_file: env/phpfpm.env
-    #extra_hosts: *appextrahosts
 
   db:
+    container_name: db
     image: mariadb:10.6
     command:
       --max_allowed_packet=64M
@@ -62,11 +67,13 @@ services:
   #    - dbdata:/var/lib/mysql
 
   redis:
+    container_name: redis
     image: redis:7.2-alpine
     ports:
       - "6379:6379"
 
   opensearch:
+    container_name: opensearch
     image: markoshust/magento-opensearch:2.12-0
     ports:
       - "9200:9200"
@@ -76,8 +83,8 @@ services:
       - "discovery.type=single-node"
       ## Avoid test failures due to small disks
       ## More info at https://github.com/markshust/docker-magento/issues/488
-      - "cluster.routing.allocation.disk.threshold_enabled=false"
-      - "index.blocks.read_only_allow_delete"
+      # - "cluster.routing.allocation.disk.threshold_enabled=false"
+      # - "index.blocks.read_only_allow_delete"
       ## Uncomment to set custom heap size to avoid memory errors
       #- "OPENSEARCH_JAVA_OPTS=-Xms1g -Xmx1g"
       ## Uncomment to increase the virtual memory map count
@@ -88,8 +95,8 @@ services:
   # Additionally, if you are performing the manual setup, you will need to
   # update the bin/setup command to use the $ES_HOST variable as the value for
   # the --elasticsearch-host argument passed to bin/magento setup:install.
-  #elasticsearch:
-  #  image: markoshust/magento-elasticsearch:8.13-0
+  # elasticsearch:
+  #  image: markoshust/magento-elasticsearch:8.4-0
   #  ports:
   #    - "9200:9200"
   #    - "9300:9300"
@@ -106,6 +113,7 @@ services:
   #    #- "max_map_count=262144"
 
   rabbitmq:
+    container_name: rabbitmq
     image: markoshust/magento-rabbitmq:3.12-0
     ports:
       - "15672:15672"
@@ -113,11 +121,6 @@ services:
     volumes:
       - rabbitmqdata:/var/lib/rabbitmq
     env_file: env/rabbitmq.env
-
-  mailcatcher:
-    image: sj26/mailcatcher
-    ports:
-      - "1080:1080"
 
   ## Cloudflare tunnel support, uncomment to enable
   #tunnel:
