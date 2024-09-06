@@ -22,9 +22,16 @@ services:
     volumes: *appvolumes
 
   phpmyadmin:
+    container_name: phpmyadmin
     image: linuxserver/phpmyadmin
     env_file: env/db.env
     ports:
       - "8080:80"
     depends_on:
       - db
+
+  mailcatcher:
+    container_name: mailcatcher
+    image: sj26/mailcatcher
+    ports:
+      - "1080:1080"

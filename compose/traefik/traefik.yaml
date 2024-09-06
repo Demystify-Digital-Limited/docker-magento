@@ -1,0 +1,37 @@
+## This file is a static config for all the entrypoints that are available for traefik to use.
+## Right now only ports 80 (http) and 443 (https) are used.
+
+log:
+  level: DEBUG
+
+api:
+  insecure: true
+  dashboard: true
+
+providers:
+  docker:
+    watch: true
+    exposedByDefault: false
+
+entryPoints:
+  web:
+    address: ":80"
+    # Uncomment to enable http -> https rewritesq
+    # http:
+    #   redirections:
+    #     entryPoint:
+    #       to: websecure
+    #       scheme: https
+
+  websecure:
+    address: ":443"
+    asDefault: true
+
+certificatesResolvers:
+  letsencrypt:
+    acme:
+      email: ty.mason@demystifydigital.co.uk
+      storage: acme.json
+      httpChallenge:
+        # used during the challenge
+        entryPoint: web
