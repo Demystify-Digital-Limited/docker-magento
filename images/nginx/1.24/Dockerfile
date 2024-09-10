@@ -20,6 +20,6 @@ EXPOSE 8443
 USER app:app
 
 VOLUME /var/www
-VOLUME /etc/nginx
+VOLUME /etc/nginx/conf.d
 
 WORKDIR /var/www/html
