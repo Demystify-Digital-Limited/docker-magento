@@ -1,7 +1,6 @@
 FROM nginx:1.24-alpine
 
 ARG APP_ID=1000
-ENV PROJECT_NAME=ecommerce-demystifydigital
 
 RUN addgroup -g "$APP_ID" app \
 && adduser -G app -u "$APP_ID" -h /var/www -s /bin/bash -S app
