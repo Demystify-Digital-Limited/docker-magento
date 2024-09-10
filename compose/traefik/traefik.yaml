@@ -1,17 +1,24 @@
 ## This file is a static config for all the entrypoints that are available for traefik to use.
 ## Right now only ports 80 (http) and 443 (https) are used.
-
-log:
-  level: DEBUG
+global:
+  checkNewVersion: true
 
 api:
   insecure: true
   dashboard: true
+  debug: true
+  disableDashboardAd: true
+
+log:
+  level: DEBUG
 
 providers:
   docker:
     watch: true
     exposedByDefault: false
+  ## Traefik will require a dynamic configuration file to be mounted in the container if needed.
+  # file:
+  #   filename: /etc/traefik/traefik-dyn.yaml
 
 entryPoints:
   web:

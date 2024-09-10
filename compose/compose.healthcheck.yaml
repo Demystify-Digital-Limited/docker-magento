@@ -1,39 +1,39 @@
 services:
-  app:
+  sub-domain-app:
     healthcheck:
       test: 'curl --fail 127.0.0.1:8000'
     depends_on:
-      phpfpm:
+      sub-domain-phpfpm:
         condition: service_started
 
-  phpfpm:
+  sub-domain-phpfpm:
     depends_on:
-      db:
+      sub-domain-db:
         condition: service_healthy
-      redis:
+      sub-domain-redis:
         condition: service_healthy
-      opensearch:
+      sub-domain-opensearch:
         condition: service_healthy
-      rabbitmq:
+      sub-domain-rabbitmq:
         condition: service_healthy
       # elasticsearch:
       #  condition: service_healthy
 
-  db:
+  sub-domain-db:
     healthcheck:
       test: 'mysqladmin ping -h localhost -u root -pmagento'
       interval: 5s
       timeout: 5s
       retries: 30
 
-  redis:
+  sub-domain-redis:
     healthcheck:
       test: 'redis-cli ping || exit 1'
       interval: 5s
       timeout: 5s
       retries: 30
 
-  opensearch:
+  sub-domain-opensearch:
     healthcheck:
       test: 'curl --fail opensearch:9200/_cat/health >/dev/null || exit 1'
       interval: 5s
@@ -47,7 +47,7 @@ services:
   #    timeout: 5s
   #    retries: 30
 
-  rabbitmq:
+  sub-domain-rabbitmq:
     healthcheck:
       test: 'rabbitmq-diagnostics -q ping'
       interval: 5s

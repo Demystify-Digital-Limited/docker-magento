@@ -86,7 +86,7 @@ Same result as the one-liner above. Just replace `magento.test` references with 
 
 ```bash
 # Create your project directory then go into it:
-mkdir -p ~/Sites/magento
+mkdir -p ~/sites/magento
 cd $_
 
 # Download the Docker Compose template:
@@ -126,17 +126,17 @@ open https://magento.test
 
 ```bash
 # Create your project directory then go into it:
-mkdir -p ~/Sites/magento
+mkdir -p ~/sites/magento
 cd $_
 
 # Download the Docker Compose template:
 curl -s https://raw.githubusercontent.com/Demystify-Digital-Limited/docker-magento/main/lib/template | bash
 
 # Take a backup of your existing database:
-bin/mysqldump > ~/Sites/existing/magento.sql
+bin/mysqldump > ~/sites/existing/magento.sql
 
 # Replace with existing source code of your existing Magento instance:
-cp -R ~/Sites/existing src
+cp -R ~/sites/existing src
 # or: git clone git@github.com:myrepo.git src
 
 # Start some containers, copy files to them and then restart the containers:

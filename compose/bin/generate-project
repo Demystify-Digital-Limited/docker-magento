@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -o errexit
+
+[ -z "$1" ] && echo "Please specify a project name (ex. ecommerce-demystifydigital)" && exit
+
+PROJECT=$1
+
+# TODO: Update compose files with project name prefixed, update nginx container phpfmp reference

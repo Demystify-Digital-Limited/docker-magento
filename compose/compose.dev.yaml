@@ -1,5 +1,5 @@
 services:
-  app:
+  sub-domain-app:
     volumes: &appvolumes
       ## Host mounts with performance penalty, only put what is necessary here
       - ./src/app/code:/var/www/html/app/code:cached
@@ -18,11 +18,11 @@ services:
       #- ./src/var/log:/var/www/html/var/log:cached
       #- ./src/var/report:/var/www/html/var/report:cached
 
-  phpfpm:
+  sub-domain-phpfpm:
     volumes: *appvolumes
 
-  phpmyadmin:
-    container_name: phpmyadmin
+  sub-domain-phpmyadmin:
+    container_name: sub-domain-phpmyadmin
     image: linuxserver/phpmyadmin
     env_file: env/db.env
     ports:
@@ -30,8 +30,8 @@ services:
     depends_on:
       - db
 
-  mailcatcher:
-    container_name: mailcatcher
+  sub-domain-mailcatcher:
+    container_name: sub-domain-mailcatcher
     image: sj26/mailcatcher
     ports:
       - "1080:1080"

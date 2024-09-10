@@ -2,8 +2,8 @@
 ## Containers that are only required or desired during development are located in the "compose.dev.yaml" file
 
 services:
-  proxy:
-    container_name: proxy
+  sub-domain-proxy:
+    container_name: sub-domain-proxy
     image: traefik:v3.1
     ports:
       - "80:80"
@@ -11,13 +11,11 @@ services:
       - "8888:8080"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./traefik/traefik.yaml:/etc/traefik/traefik.yaml:ro
-      - ./traefik/acme.json/:/etc/traefik/acme
-    depends_on:
-      - app
+      - ./traefik/:/etc/traefik/
+      - ./traefik/acme.json:/acme.json
 
-  app:
-    container_name: app
+  sub-domain-app:
+    container_name: sub-domain-app
     image: tygrdev/magento-nginx:1.24-0
     volumes: &appvolumes
       - ~/.composer:/var/www/.composer:cached
@@ -25,29 +23,30 @@ services:
       - ~/.ssh/known_hosts:/var/www/.ssh/known_hosts:cached
       - appdata:/var/www/html
       - sockdata:/sock
-      - ssldata:/etc/nginx/certs
     labels:
       - traefik.enable=true
       - traefik.http.routers.app.entrypoints=web,websecure
       - traefik.http.routers.app.rule=Host(`ecommerce.demystifydigital.co.uk`)
       - traefik.http.services.app.loadbalancer.server.port=8000
-      - traefik.http.routers.app.tls.certResolver=letsencrypt
+      - traefik.http.routers.app.tls.certresolver=letsencrypt
+    environment:
+      - PROJECT_NAME=sub-domain
 
-  phpfpm:
-    container_name: phpfpm
+  sub-domain-phpfpm:
+    container_name: sub-domain-phpfpm
     image: markoshust/magento-php:8.1-fpm-5
     volumes: *appvolumes
     env_file: env/phpfpm.env
 
-  db:
-    container_name: db
+  sub-domain-db:
+    container_name: sub-domain-db
     image: mariadb:10.6
     command:
       --max_allowed_packet=64M
       --optimizer_use_condition_selectivity=1
       --optimizer_switch="rowid_filter=off"
-    ports:
-      - "3306:3306"
+    # ports:
+    #   - "3306:3306"
     env_file: env/db.env
     volumes:
       - dbdata:/var/lib/mysql
@@ -66,18 +65,18 @@ services:
   #  volumes:
   #    - dbdata:/var/lib/mysql
 
-  redis:
-    container_name: redis
+  sub-domain-redis:
+    container_name: sub-domain-redis
     image: redis:7.2-alpine
-    ports:
-      - "6379:6379"
+    # ports:
+    #   - "6379:6379"
 
-  opensearch:
-    container_name: opensearch
+  sub-domain-opensearch:
+    container_name: sub-domain-opensearch
     image: markoshust/magento-opensearch:2.12-0
-    ports:
-      - "9200:9200"
-      - "9300:9300"
+    # ports:
+    #   - "9200:9200"
+    #   - "9300:9300"
     env_file: env/opensearch.env
     environment:
       - "discovery.type=single-node"
@@ -112,12 +111,12 @@ services:
   #    ## Uncomment to increase the virtual memory map count
   #    #- "max_map_count=262144"
 
-  rabbitmq:
-    container_name: rabbitmq
+  sub-domain-rabbitmq:
+    container_name: sub-domain-rabbitmq
     image: markoshust/magento-rabbitmq:3.12-0
-    ports:
-      - "15672:15672"
-      - "5672:5672"
+    # ports:
+    #   - "15672:15672"
+    #   - "5672:5672"
     volumes:
       - rabbitmqdata:/var/lib/rabbitmq
     env_file: env/rabbitmq.env
